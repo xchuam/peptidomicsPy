@@ -38,6 +38,7 @@ ENV/
 Thumbs.db
 .idea/
 .vscode/
+.devcontainer/
 
 # Local environment files
 .env
