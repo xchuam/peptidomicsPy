@@ -32,7 +32,12 @@ Version policy:
 
 - The Python package version must align with the upstream R package version being migrated.
 - Read the target version from the upstream R package metadata, normally `DESCRIPTION`.
+- For this upstream package, treat R development versions ending in `.9000` as equivalent to the GitHub prerelease label `-alpha`.
+- Example equivalence: `1.1.1.9000` in `DESCRIPTION` maps to `v1.1.1-alpha` in GitHub tagging and migration naming.
+- Use the `alpha` form as the canonical human-facing migration label in this repository.
 - Do not invent an independent Python package version line during parity migration.
+- When branch names, migration artifacts, or status notes need a version label, prefer the `alpha` form rather than the `.9000` form.
+- If Python package metadata needs a prerelease version string, keep it semantically aligned with the same upstream target and use a Python-packaging-valid prerelease representation when needed.
 - If the Python package must temporarily diverge from the upstream R version, document the reason explicitly in the migration notes and release checklist.
 
 Branch policy:
@@ -42,7 +47,9 @@ Branch policy:
 - Preferred core branch name: `migration/core`.
 - For each upstream R package version, create a version-specific migration branch from the core migration branch.
 - Preferred version branch format: `migration/v<r-package-version>`.
-- Example: `migration/v0.3.0`.
+- For upstream `.9000` development versions, convert the branch name to the equivalent `alpha` label.
+- Example: upstream `1.1.1.9000` should use branch `migration/v1.1.1-alpha`.
+- Example stable branch: `migration/v0.3.0`.
 - Use the core migration branch to accumulate migration artifacts, audit history, and shared migration progress.
 - Use the version branch to capture the work and decisions specific to a single upstream version target.
 - Treat `main` as the user-facing stable line for the Python package, and only merge package-ready results into `main`.
@@ -113,7 +120,7 @@ Follow these stages unless the user explicitly redirects the work:
 
 Do not skip Stage 1 just because implementation seems obvious.
 
-At the start of a migration cycle, confirm the target upstream R package version and the current branch name before making substantial edits.
+At the start of a migration cycle, confirm the target upstream R package version, normalize `.9000` to the equivalent `alpha` label when applicable, and verify that the current branch name uses that canonical label before making substantial edits.
 
 ## First Move For New Work
 
