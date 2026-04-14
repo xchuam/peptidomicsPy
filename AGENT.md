@@ -213,8 +213,22 @@ If Python behavior intentionally differs from R behavior, record it in `.migrati
 - Convert test intent, not just test syntax.
 - Prefer pytest for all new Python tests.
 - Add parity-focused fixtures when behavior is ambiguous or data-dependent.
+- For every function modified during the current migration process, add or update explicit R-versus-Python comparison coverage.
+- For functions that return tables, vectors, dicts, dataclass-like objects, or other structured results, compare the Python outputs directly against the corresponding R outputs and confirm the same calculations, column content, row counts, ordering rules, and key metadata assumptions.
+- For functions that return figures, compare Python renders against R renders using the same plotting inputs and review figure behavior as well as style details that matter for user interpretation, including labels, legends, panel order, axis scale, axis units, tick formatting, color use, and annotation placement.
 - For statistical and plotting code, verify both numeric outputs and metadata assumptions where practical.
 - Do not merge major migration steps without corresponding tests or documented fixture-based verification.
+- When a previously migrated function is changed again, update its parity tests in the same change rather than leaving the comparison suite stale.
+
+## Manual Validation Notebook
+
+- Maintain a version-scoped Jupyter notebook under `tests/` for manual inspection of the current migration target.
+- The notebook must include manual checking cells for every function modified in the current migration branch.
+- The notebook should cover both structured-output functions and plotting functions.
+- For structured-output functions, include cells that load the R reference outputs, run the Python implementation, and show side-by-side or assertion-backed comparisons that make mismatches easy to inspect.
+- For plotting functions, include cells that render the R reference figure, the Python figure, and a visual comparison view so manual review is straightforward.
+- When a function is added, ported, or behaviorally changed during migration, update the notebook in the same branch so manual checking stays complete.
+- Prefer a version-specific notebook name tied to the active migration target, for example `tests/manual_validation_v1_1_1_alpha.ipynb` or an equivalent repo-approved naming convention.
 
 ## Packaging Expectations
 

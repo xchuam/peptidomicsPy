@@ -1,0 +1,12 @@
+function_name
+filterPeptides
+plot_cleavage_site
+plot_count
+plot_gravy_vs_intensity
+plot_int
+plot_length_distribution
+plot_pep_align
+plot_type_num
+plot_volcano
+processPeptides
+ttestPeptides

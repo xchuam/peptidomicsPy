@@ -39,6 +39,7 @@ Thumbs.db
 .idea/
 .vscode/
 .devcontainer/
+.Rhistory
 
 # Local environment files
 .env
