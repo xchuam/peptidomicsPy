@@ -52,6 +52,13 @@ Branch policy:
 - Example stable branch: `migration/v0.3.0`.
 - Use the core migration branch to accumulate migration artifacts, audit history, and shared migration progress.
 - Use the version branch to capture the work and decisions specific to a single upstream version target.
+- After a version-specific migration branch is sufficiently mature, create a user-facing promotion branch from the relevant migration branch or from `migration/core` when appropriate.
+- Preferred promotion branch format: `promotion/v<r-package-version>`.
+- Example prerelease promotion branch: `promotion/v1.1.1-alpha`.
+- Use the promotion branch to prepare the version for eventual merge into `main`.
+- On the promotion branch, focus on user-facing package readiness: keep package code, tests, docs, packaging metadata, and release-facing content aligned for `main`.
+- On the promotion branch, review whether migration-only files or history-tracking artifacts should remain off `main`, and prepare the branch accordingly before promotion to `main`.
+- Treat the promotion branch as the staging area between migration work and the user-facing `main` branch.
 - Treat `main` as the user-facing stable line for the Python package, and only merge package-ready results into `main`.
 
 ## Required Working Style
@@ -121,6 +128,7 @@ Follow these stages unless the user explicitly redirects the work:
 Do not skip Stage 1 just because implementation seems obvious.
 
 At the start of a migration cycle, confirm the target upstream R package version, normalize `.9000` to the equivalent `alpha` label when applicable, and verify that the current branch name uses that canonical label before making substantial edits.
+When working on promotion tasks, verify that the current branch is the matching `promotion/v...` branch for the target version before preparing content for merge to `main`.
 
 ## First Move For New Work
 
