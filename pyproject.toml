@@ -36,11 +36,14 @@ classifiers = [
 dev = [
   "pytest>=8.0",
   "ruff>=0.6",
+  "nbclient>=0.10",
+  "nbformat>=5.10",
 ]
 
 [project.urls]
-Homepage = "https://github.com/xchuam/peptidomicsR"
-Source = "https://github.com/xchuam/peptidomicsR"
+Homepage = "https://github.com/xchuam/peptidomicsPy"
+Source = "https://github.com/xchuam/peptidomicsPy"
+Issues = "https://github.com/xchuam/peptidomicsPy/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/peptidomicspy"]
@@ -48,9 +51,13 @@ packages = ["src/peptidomicspy"]
 [tool.hatch.build.targets.sdist]
 include = [
   "/src/peptidomicspy",
+  "/examples",
   "/tests",
-  "/tools",
   "/README.md",
+  "/README.ipynb",
+  "/README_files",
+  "/CITATION.cff",
+  "/LICENSE",
   "/pyproject.toml",
 ]
 

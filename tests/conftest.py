@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
-import subprocess
 from pathlib import Path
 
 import matplotlib
@@ -18,8 +16,7 @@ matplotlib.use("Agg")
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_DIR = REPO_ROOT / "tests" / "fixtures" / "v1.1.1-alpha"
-REFERENCE_DIR = REPO_ROOT / ".migration-artifacts" / "v1.1.1-alpha" / "reference_outputs"
-DEFAULT_UPSTREAM_R_DIR = Path("/tmp/peptidomicsR-v1.1.1-alpha")
+REFERENCE_DIR = REPO_ROOT / "tests" / "reference" / "v1.1.1-alpha"
 
 
 @pytest.fixture(scope="session")
@@ -30,14 +27,6 @@ def fixture_dir() -> Path:
 @pytest.fixture(scope="session")
 def reference_dir() -> Path:
     return REFERENCE_DIR
-
-
-@pytest.fixture(scope="session")
-def upstream_r_dir() -> Path:
-    candidate = Path(os.environ.get("PEPTIDOMICSR_UPSTREAM_DIR", DEFAULT_UPSTREAM_R_DIR))
-    if not candidate.exists():
-        pytest.skip(f"Upstream R package checkout not found at {candidate}")
-    return candidate
 
 
 @pytest.fixture(scope="session")
@@ -52,26 +41,6 @@ def process_result(fixture_dir: Path):
         intensity_columns_file=fixture_dir / "Intensity_columns.csv",
         protein_mapping_file=fixture_dir / "protein_mapping.csv",
     )
-
-
-@pytest.fixture(scope="session")
-def r_parity_dir(tmp_path_factory, upstream_r_dir: Path, fixture_dir: Path) -> Path:
-    out_dir = tmp_path_factory.mktemp("r-parity")
-    env = os.environ.copy()
-    env.setdefault("R_LIBS_USER", str(Path.home() / "R" / "x86_64-pc-linux-gnu-library" / "4.3"))
-    subprocess.run(
-        [
-            "Rscript",
-            "tools/generate_r_parity_suite.R",
-            str(upstream_r_dir),
-            str(fixture_dir),
-            str(out_dir),
-        ],
-        cwd=REPO_ROOT,
-        env=env,
-        check=True,
-    )
-    return out_dir
 
 
 @pytest.fixture(scope="session")
@@ -133,29 +102,3 @@ def get_plot_label(plot, key: str) -> str | None:
             if value is not None:
                 return value
     return None
-
-
-def load_rgb_image(path: Path) -> np.ndarray:
-    arr = matplotlib.image.imread(path).astype(float)
-    if arr.max() > 1:
-        arr = arr / 255.0
-    if arr.shape[-1] == 4:
-        alpha = arr[..., 3:4]
-        arr = arr[..., :3] * alpha + (1 - alpha)
-    return arr[..., :3]
-
-
-def resize_nn(image: np.ndarray, height: int, width: int) -> np.ndarray:
-    ys = np.linspace(0, image.shape[0] - 1, height).round().astype(int)
-    xs = np.linspace(0, image.shape[1] - 1, width).round().astype(int)
-    return image[np.ix_(ys, xs)]
-
-
-def image_mae(path_a: Path, path_b: Path) -> float:
-    image_a = load_rgb_image(path_a)
-    image_b = load_rgb_image(path_b)
-    height = max(image_a.shape[0], image_b.shape[0])
-    width = max(image_a.shape[1], image_b.shape[1])
-    image_a = resize_nn(image_a, height, width)
-    image_b = resize_nn(image_b, height, width)
-    return float(np.abs(image_a - image_b).mean())

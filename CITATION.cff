@@ -1,0 +1,48 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it as below."
+title: "peptidomicspy: Tools for Peptidomics and Protein Digestion Analysis"
+type: software
+abstract: >
+  A Python package for processing, filtering, visualizing, and comparing
+  peptidomics data from protein digestion studies, including MaxQuant peptide
+  processing, GRAVY calculations, peptide alignment, cleavage-site plots, and
+  group-wise differential analysis.
+version: "1.1.1a0"
+license: GPL-3.0-or-later
+repository-code: "https://github.com/xchuam/peptidomicsPy"
+url: "https://github.com/xchuam/peptidomicsPy"
+keywords:
+  - peptidomics
+  - protein digestion
+  - MaxQuant
+  - data processing
+  - data visualization
+languages:
+  - Python
+authors:
+  - family-names: Ma
+    given-names: Xuchuan
+    email: xuchuan.ma@gmail.com
+    orcid: "https://orcid.org/0000-0001-6797-0886"
+    affiliation: "Delft University of Technology"
+  - family-names: Ren
+    given-names: Qing
+    email: qing.ren@wur.nl
+    orcid: "https://orcid.org/0000-0003-3479-6679"
+    affiliation: "Wageningen University & Research"
+contact:
+  - family-names: Ma
+    given-names: Xuchuan
+    email: xuchuan.ma@gmail.com
+preferred-citation:
+  type: software
+  title: "peptidomicspy"
+  version: "1.1.1a0"
+  authors:
+    - family-names: Ma
+      given-names: Xuchuan
+      orcid: "https://orcid.org/0000-0001-6797-0886"
+  - family-names: Ren
+    given-names: Qing
+    orcid: "https://orcid.org/0000-0003-3479-6679"
+  year: 2025
