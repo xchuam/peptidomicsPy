@@ -93,3 +93,52 @@ def bh_adjust(pvalues: Iterable[float]) -> np.ndarray:
     restored[order] = adjusted
     out[valid] = restored
     return out
+
+
+def adjust_pvalues(pvalues: Iterable[float], method: str = "BH") -> np.ndarray:
+    method_norm = method.lower()
+    aliases = {
+        "fdr": "bh",
+    }
+    method_norm = aliases.get(method_norm, method_norm)
+    arr = np.asarray(list(pvalues), dtype=float)
+    out = np.full(arr.shape, np.nan)
+    valid = np.isfinite(arr)
+    if not valid.any():
+        return out
+    vals = arr[valid]
+    n = len(vals)
+
+    if method_norm in {"bh"}:
+        out[valid] = bh_adjust(vals)
+        return out
+
+    if method_norm == "bonferroni":
+        out[valid] = np.clip(vals * n, 0.0, 1.0)
+        return out
+
+    if method_norm == "none":
+        out[valid] = vals
+        return out
+
+    if method_norm == "holm":
+        order = np.argsort(vals)
+        ranked = vals[order]
+        adjusted = np.empty(n, dtype=float)
+        running = 0.0
+        for idx, value in enumerate(ranked):
+            candidate = (n - idx) * value
+            running = max(running, candidate)
+            adjusted[idx] = running
+        adjusted = np.clip(adjusted, 0.0, 1.0)
+        restored = np.empty(n, dtype=float)
+        restored[order] = adjusted
+        out[valid] = restored
+        return out
+
+    if method_norm == "by":
+        harmonic = float(np.sum(1.0 / np.arange(1, n + 1)))
+        out[valid] = np.clip(bh_adjust(vals) * harmonic, 0.0, 1.0)
+        return out
+
+    raise ValueError("Unsupported adjust method. Supported methods: BH, fdr, bonferroni, holm, BY, none.")
