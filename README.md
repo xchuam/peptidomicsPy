@@ -220,10 +220,10 @@ result = processPeptides(
 
 ## 📖 Citation
 
-*Ma, X., & Ren, Q. (2025). peptidomicspy (Version 1.1.1-alpha) [Computer software]*
+If you use **peptidomicspy** in your work, please cite this repository:
 
-If you use this package, please cite it as above.
+*Ma, X., & Ren, Q. (2026). peptidomicspy (Version 1.1.1-alpha) [Computer software]*
 
 ## 📜 License
 
-This project is licensed under the **GPL-3.0 License** — see the `LICENSE` file for details.
+This project is licensed under the **GPL-3.0-or-later License** — see the `LICENSE` file for details.
