@@ -506,7 +506,7 @@ def plot_volcano(
                     data=labeled,
                     mapping=aes(label="Sequence"),
                     color=label_col,
-                    size=label_size * 1.4,
+                    size=label_size * 2.4,
                     adjust_text={
                         "expand": (1.15, 1.35),
                         "force_text": (0.4, 0.8),
@@ -613,6 +613,8 @@ def plot_pep_align(
     min_width: float = 4,
     min_height: float = 3,
 ):
+    if type not in {"mean", "reps"}:
+        raise ValueError("type must be one of 'mean' or 'reps'.")
     frame = result.dt_peptides_int.copy(deep=True) if type == "mean" else result.dt_peptides_int_reps.copy(deep=True)
     grp_cols = list(result.grp_cols)
     if intensity_col is None:
@@ -703,12 +705,22 @@ def plot_pep_align(
     protein_ax = fig.add_subplot(grid[0, 0])
     peptide_axes = [fig.add_subplot(grid[idx + 1, 0], sharex=protein_ax) for idx in range(len(panel_data))]
 
-    aa_letters = list(protein_seq) if protein_seq else ["X"] * protein_length
-    for position, letter in enumerate(aa_letters, start=1):
+    for position in range(1, protein_length + 1):
         protein_ax.add_patch(
             Rectangle((position, 0.5), 1, 1, facecolor="0.95", edgecolor="0.3", linewidth=0.1)
         )
-        protein_ax.text(position + 0.5, 1.0, letter, ha="center", va="center", fontsize=6, color="black")
+    if protein_seq:
+        for position, letter in enumerate(protein_seq, start=1):
+            protein_ax.text(
+                float(position) + 0.5,
+                1.0,
+                letter,
+                ha="center",
+                va="center",
+                fontsize=6,
+                color="black",
+                clip_on=True,
+            )
     protein_break_end = max(float(protein_length + 1), float(x_range[1]))
     protein_breaks = [1, *range(int(x_interval), int(protein_break_end + x_interval), int(x_interval))]
     protein_ax.set_xlim(*x_range)
@@ -717,7 +729,7 @@ def plot_pep_align(
     protein_ax.set_xticks(protein_breaks)
     protein_ax.set_yticks([])
     protein_ax.set_ylabel("")
-    protein_ax.set_xlabel("Protein Position")
+    protein_ax.set_xlabel("")
     protein_ax.text(-0.04, 0.2, "P", rotation=90, transform=protein_ax.transAxes, ha="center", va="center", fontsize=10)
     protein_ax.spines["right"].set_visible(False)
     protein_ax.spines["left"].set_visible(False)
@@ -737,6 +749,7 @@ def plot_pep_align(
                 facecolor=cmap(norm(float(row[intensity_col]))),
                 edgecolor="none",
                 linewidth=0,
+                clip_on=True,
             )
             for label_name, seqs in label_seq.items():
                 if row[seq_col] in seqs:
@@ -746,15 +759,26 @@ def plot_pep_align(
 
             sequence = str(row[seq_col])
             for offset, letter in enumerate(sequence, start=1):
-                axis.text(float(row[start_col]) + offset - 0.5, float(row["stack_row"]), letter, ha="center", va="center", fontsize=6, color="black")
+                axis.text(
+                    float(row[start_col]) + offset - 0.5,
+                    float(row["stack_row"]),
+                    letter,
+                    ha="center",
+                    va="center",
+                    fontsize=6,
+                    color="black",
+                    clip_on=True,
+                )
 
         axis.set_xlim(*x_range)
         if y_range is None:
             ymax_use = float(panel_frame["stack_row"].max()) + 0.5
             ymin_use = -0.5
         else:
-            ymax_use = float(y_range[1])
-            ymin_use = float(y_range[0])
+            # Match the automatic panel padding so custom row windows include
+            # the full peptide rectangles rather than cutting the edge rows.
+            ymax_use = float(y_range[1]) + 0.5
+            ymin_use = float(y_range[0]) - 0.5
         axis.set_ylim(ymax_use, ymin_use)
         axis.set_yticks([])
         axis.tick_params(axis="x", which="both", bottom=False, labelbottom=False)
@@ -765,28 +789,41 @@ def plot_pep_align(
 
     scalar = ScalarMappable(norm=norm, cmap=cmap)
     scalar.set_array([])
-    colorbar_left = 0.42
-    colorbar_width = 0.16
-    colorbar_bottom = 0.06 if not label_color_map else 0.11
-    colorbar_height = 0.025
-    cax = fig.add_axes([colorbar_left, colorbar_bottom, colorbar_width, colorbar_height])
-    colorbar = fig.colorbar(scalar, cax=cax, orientation="horizontal")
+    colorbar = fig.colorbar(
+        scalar,
+        ax=[protein_ax, *peptide_axes],
+        orientation="horizontal",
+        fraction=0.035,
+        pad=0.055,
+        shrink=0.32,
+    )
     colorbar.set_label(intensity_col)
     colorbar.ax.xaxis.set_major_formatter(_scientific_formatter())
 
+    bottom_margin = 0.16
     if label_color_map:
         handles = [
             Patch(facecolor="none", edgecolor=color, linewidth=2, label=label_name)
             for label_name, color in label_color_map.items()
         ]
-        fig.legend(handles=handles, title="Label", loc="lower center", bbox_to_anchor=(0.5, 0.03), ncol=min(len(handles), 3), frameon=False)
+        fig.legend(
+            handles=handles,
+            title="Label",
+            loc="lower center",
+            bbox_to_anchor=(0.5, 0.005),
+            ncol=min(len(handles), 3),
+            frameon=False,
+        )
+        bottom_margin = 0.24
 
     fig.suggested_fig_width = width
     fig.suggested_fig_height = height
     fig.suggested_fig_size = (width, height)
-    fig.subplots_adjust(top=0.96, bottom=0.16 if label_color_map else 0.12, hspace=0.03)
+    fig.subplots_adjust(top=0.96, bottom=bottom_margin, hspace=0.03)
     if save_file_location:
         fig.savefig(save_file_location, dpi=save_file_dpi, bbox_inches="tight")
+        fig.save_file_location = save_file_location
+        fig.save_file_dpi = save_file_dpi
     return fig
 
 
@@ -900,6 +937,16 @@ def plot_cleavage_site(
         Patch(facecolor=color, edgecolor=color, label=label)
         for label, color in chemistry_groups
     ]
-    fig.legend(handles=handles, title="chemistry", loc="lower center", ncol=len(handles), frameon=False)
-    fig.tight_layout(rect=(0, 0.08, 1, 1))
+    if len(terminals) == 1:
+        axes[0, 0].legend(
+            handles=handles,
+            title="chemistry",
+            loc="center left",
+            bbox_to_anchor=(1.02, 0.5),
+            frameon=False,
+        )
+        fig.tight_layout(rect=(0, 0, 0.86, 1))
+    else:
+        fig.legend(handles=handles, title="chemistry", loc="lower center", ncol=len(handles), frameon=False)
+        fig.tight_layout(rect=(0, 0.08, 1, 1))
     return fig

@@ -12,10 +12,10 @@ from ._result import PeptidomicsResult
 from ._utils import normalize_column_names, read_input_table, to_ordered_category
 
 
-def calculate_gravy(sequence: str) -> float:
-    if not isinstance(sequence, str) or not sequence:
+def calculate_gravy(peptide: str) -> float:
+    if not isinstance(peptide, str) or not peptide:
         return float("nan")
-    values = [HYDROPATHY.get(residue) for residue in sequence]
+    values = [HYDROPATHY.get(residue) for residue in peptide]
     if any(value is None for value in values):
         return float("nan")
     return float(sum(values) / len(values))
