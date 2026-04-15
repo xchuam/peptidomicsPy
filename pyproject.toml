@@ -51,14 +51,13 @@ packages = ["src/peptidomicspy"]
 [tool.hatch.build.targets.sdist]
 include = [
   "/src/peptidomicspy",
-  "/examples",
-  "/tests",
   "/README.md",
   "/README.ipynb",
   "/README_files",
   "/CITATION.cff",
   "/LICENSE",
   "/pyproject.toml",
+  "/examples",
 ]
 
 [tool.pytest.ini_options]
