@@ -8,7 +8,7 @@ import pandas as pd
 from scipy import stats
 
 from ._result import PeptidomicsResult
-from ._utils import bh_adjust
+from ._utils import adjust_pvalues
 
 
 def _normalize_comparisons(
@@ -181,8 +181,6 @@ def ttestPeptides(
 ) -> dict[str, pd.DataFrame]:
     if test_method not in {"treat", "plain"}:
         raise ValueError("test_method must be either 'treat' or 'plain'.")
-    if adjust.upper() != "BH":
-        raise ValueError("Only BH adjustment is currently supported.")
 
     dt = result.dt_peptides_int_ttest.copy(deep=True)
     grp_cols = list(result.grp_cols)
@@ -261,7 +259,7 @@ def ttestPeptides(
         stats_frame = pd.DataFrame(statistics, columns=["t", "df", "p.value"], index=merged.index)
         merged = pd.concat([merged, stats_frame], axis=1)
         merged["log2FC"] = merged["mean_A"] - merged["mean_B"]
-        merged["p.adj"] = bh_adjust(merged["p.value"])
+        merged["p.adj"] = adjust_pvalues(merged["p.value"], method=adjust)
         merged["sig"] = np.where(
             (merged["p.adj"] <= alpha) & (merged["log2FC"].abs() >= lfc_thresh),
             "yes",
@@ -282,4 +280,3 @@ def ttestPeptides(
         results[f"{sel_a_raw}_vs_{sel_b_raw}"] = merged
 
     return results
-
