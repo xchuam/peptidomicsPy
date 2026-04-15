@@ -226,4 +226,4 @@ If you use **peptidomicsPy** in your work, please cite this repository:
 
 ## 📜 License
 
-This project is licensed under the **GPL-3.0-or-later License** — see the `LICENSE` file for details.
+This project is licensed under the **GPL-3.0 License** — see the `LICENSE` file for details.

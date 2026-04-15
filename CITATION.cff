@@ -8,7 +8,7 @@ abstract: >
   processing, GRAVY calculations, peptide alignment, cleavage-site plots, and
   group-wise differential analysis.
 version: "1.1.1-alpha"
-license: GPL-3.0-or-later
+license: GPL-3.0
 repository-code: "https://github.com/xchuam/peptidomicsPy"
 url: "https://github.com/xchuam/peptidomicsPy"
 keywords:
