@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this repository, please cite it as below."
+message: "If you use this software, please cite it as below."
 title: "peptidomicspy: Tools for Peptidomics and Protein Digestion Analysis"
 type: software
 abstract: >
@@ -42,7 +42,9 @@ preferred-citation:
     - family-names: Ma
       given-names: Xuchuan
       orcid: "https://orcid.org/0000-0001-6797-0886"
-  - family-names: Ren
-    given-names: Qing
-    orcid: "https://orcid.org/0000-0003-3479-6679"
+      affiliation: "Delft University of Technology"
+    - family-names: Ren
+      given-names: Qing
+      orcid: "https://orcid.org/0000-0003-3479-6679"
+      affiliation: "Wageningen University & Research"
   year: 2025
