@@ -52,6 +52,13 @@ Branch policy:
 - Example stable branch: `migration/v0.3.0`.
 - Use the core migration branch to accumulate migration artifacts, audit history, and shared migration progress.
 - Use the version branch to capture the work and decisions specific to a single upstream version target.
+- After a version-specific migration branch is sufficiently mature, create a user-facing promotion branch from the relevant migration branch or from `migration/core` when appropriate.
+- Preferred promotion branch format: `promotion/v<r-package-version>`.
+- Example prerelease promotion branch: `promotion/v1.1.1-alpha`.
+- Use the promotion branch to prepare the version for eventual merge into `main`.
+- On the promotion branch, focus on user-facing package readiness: keep package code, tests, docs, packaging metadata, and release-facing content aligned for `main`.
+- On the promotion branch, review whether migration-only files or history-tracking artifacts should remain off `main`, and prepare the branch accordingly before promotion to `main`.
+- Treat the promotion branch as the staging area between migration work and the user-facing `main` branch.
 - Treat `main` as the user-facing stable line for the Python package, and only merge package-ready results into `main`.
 
 ## Required Working Style
@@ -121,6 +128,7 @@ Follow these stages unless the user explicitly redirects the work:
 Do not skip Stage 1 just because implementation seems obvious.
 
 At the start of a migration cycle, confirm the target upstream R package version, normalize `.9000` to the equivalent `alpha` label when applicable, and verify that the current branch name uses that canonical label before making substantial edits.
+When working on promotion tasks, verify that the current branch is the matching `promotion/v...` branch for the target version before preparing content for merge to `main`.
 
 ## First Move For New Work
 
@@ -208,13 +216,45 @@ Be especially careful with:
 
 If Python behavior intentionally differs from R behavior, record it in `.migration-artifacts/DEVIATION_LOG.md` and reflect it in `.migration-artifacts/PARITY_REPORT.md`.
 
+## Public Function Parameter Contract
+
+- For every migrated public function that has an upstream R counterpart, the Python function must keep the same parameter names and the same parameter order as the R function unless a deviation is explicitly documented.
+- Default parameter behavior must match the upstream R behavior, including the default branch chosen by `match.arg(...)`, `NULL` versus provided-value behavior, and side effects such as warnings, filtering, plotting choices, and file output.
+- Do not silently rename parameters, collapse distinct R parameters into one Python parameter, or add new required parameters to parity-facing functions.
+- If a Python implementation needs an internal sentinel or wrapper default to represent an R default cleanly, keep the public behavior equivalent and document that in tests or migration notes.
+- If a Python helper has no direct upstream R function counterpart, bind it to a specific upstream artifact or dataset and state the parity target explicitly.
+- Maintain an automated parameter-contract check against the upstream R formals for all migrated public functions on migration branches.
+- When a parameter is intentionally unsupported, broadened, or only approximately matched, document that exact parameter-level deviation in `.migration-artifacts/DEVIATION_LOG.md`.
+
 ## Testing Expectations
 
 - Convert test intent, not just test syntax.
 - Prefer pytest for all new Python tests.
 - Add parity-focused fixtures when behavior is ambiguous or data-dependent.
+- Treat parameter parity as part of API parity, not as optional polish.
+- For every migrated public function, maintain a parameter coverage matrix that shows which automated parity case exercises each parameter.
+- For every function modified during the current migration process, add or update explicit R-versus-Python comparison coverage.
+- For functions that return tables, vectors, dicts, dataclass-like objects, or other structured results, compare the Python outputs directly against the corresponding R outputs and confirm the same calculations, column content, row counts, ordering rules, and key metadata assumptions.
+- For functions that return figures, compare Python renders against R renders using the same plotting inputs and review figure behavior as well as style details that matter for user interpretation, including labels, legends, panel order, axis scale, axis units, tick formatting, color use, and annotation placement.
+- Every public parameter must be exercised by at least one explicit R-versus-Python parity case on migration branches.
+- When practical, prefer cases that isolate a parameter or a small parameter family so mismatches can be traced quickly.
+- For parameters that mainly control side effects, such as save paths or device sizing, compare the observed side effect against the R behavior rather than skipping the parameter.
 - For statistical and plotting code, verify both numeric outputs and metadata assumptions where practical.
 - Do not merge major migration steps without corresponding tests or documented fixture-based verification.
+- When a previously migrated function is changed again, update its parity tests in the same change rather than leaving the comparison suite stale.
+
+## Manual Validation Notebook
+
+- Maintain a version-scoped Jupyter notebook under `tests/` for manual inspection of the current migration target.
+- The notebook must include manual checking cells for every function modified in the current migration branch.
+- The notebook must also make parameter coverage visible, so a reviewer can see how each public parameter is being checked against the upstream R version.
+- The notebook should cover both structured-output functions and plotting functions.
+- For structured-output functions, include cells that load the R reference outputs, run the Python implementation, and show side-by-side or assertion-backed comparisons that make mismatches easy to inspect.
+- For plotting functions, include cells that render the R reference figure, the Python figure, and a visual comparison view so manual review is straightforward.
+- For every public function, the notebook should include one or more cases that collectively exercise every parameter against the R behavior, and each case should clearly state which parameters it is covering.
+- If a function has many parameters, organize the notebook by parameter families or case groups, but do not leave any public parameter without a named manual-check case.
+- When a function is added, ported, or behaviorally changed during migration, update the notebook in the same branch so manual checking stays complete.
+- Prefer a version-specific notebook name tied to the active migration target, for example `tests/manual_validation_v1_1_1_alpha.ipynb` or an equivalent repo-approved naming convention.
 
 ## Packaging Expectations
 

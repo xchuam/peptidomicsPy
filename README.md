@@ -1,0 +1,204 @@
+# peptidomicspy
+
+**Tools for peptidomics analysis of digesta from protein digestion**
+
+`peptidomicspy` provides functions to process, filter, analyze, and visualize peptidomics data, especially from MaxQuant protein digestion studies. This README introduces the package through four parts:
+
+✨ **Functions**
+
+🚀 **Example analysis workflow**
+
+📊 **Example plots**
+
+🛠️ **Required input files**
+
+## 📦 Installation
+
+```bash
+python -m pip install "git+https://github.com/xchuam/peptidomicsPy.git"
+```
+
+## ✨ Functions
+
+### 1) Data processing — `processPeptides()`
+
+- Import a MaxQuant peptide export, intensity-column metadata, and protein mapping.
+- Automatically remove contaminants and reverse sequences.
+- Compute replicate- and group-level mean intensities and peptide type numbers.
+- Map parent protein name and protein group for each peptide.
+- Calculate peptide GRAVY scores.
+
+### 2) Filtering & statistics
+
+- Subset by sequence, regex pattern, or grouping variables — `filterPeptides()`.
+- Compare specific groups using statistical analysis to identify significantly different peptides — `ttestPeptides()`.
+
+### 3) Visualization
+
+- Stacked bar plots of **peptide intensities** by parent proteins — `plot_int()`.
+- Stacked bar plots of **numbers of unique peptide types** by parent proteins — `plot_type_num()`.
+- **Peptide-length distribution** as stacked bars or weighted density curves — `plot_length_distribution()`.
+- **Cleavage-site** sequence logos for N, C, or both termini — `plot_cleavage_site()`.
+- **GRAVY vs. intensity** scatter or density plots — `plot_gravy_vs_intensity()`.
+- **Peptide alignment** along a selected protein, with optional auto-sizing and sequence lookup — `plot_pep_align()`.
+- **Volcano plot(s)** for `ttestPeptides()` results — `plot_volcano()`.
+
+## 🚀 Example analysis workflow
+
+1. Import and process data → `processPeptides()`
+2. Explore distributions:
+   - Intensities → `plot_int()`
+   - Peptide types → `plot_type_num()`
+   - Length distribution → `plot_length_distribution()`
+   - Cleavage sites → `plot_cleavage_site()`
+   - Hydrophobicity trends → `plot_gravy_vs_intensity()`
+3. Filter subsets of peptides → `filterPeptides()`
+4. Perform statistical comparisons → `ttestPeptides()`
+5. Visualize results → `plot_volcano()`
+
+## 📊 Example plots
+
+> This is only a small sample of the exported functions included in the package.
+> For more information, please check the help files and tests.
+
+### 1) Import and process data
+
+```python
+from peptidomicspy import (
+    plot_cleavage_site,
+    plot_int,
+    plot_length_distribution,
+    plot_pep_align,
+    processPeptides,
+)
+
+result = processPeptides(
+    peptides_file="examples/data/Yogurtexample_QR188-205.csv",
+    intensity_columns_file="examples/data/Intensity_columns.csv",
+    protein_mapping_file="examples/data/protein_mapping.csv",
+)
+```
+
+
+
+### 2) Mean peptide intensities by parent proteins
+
+```python
+plot_int(
+    result,
+    x_var="Yogurt",
+    type="mean",
+    filter_params={"Digest.stage": "G120"},
+    color_by="Protein.name",
+)
+```
+
+![](README_files/figure-markdown/cell-07-output-00.png)
+
+
+
+### 3) Peptide-length distribution (by intensity)
+
+```python
+plot_length_distribution(
+    result,
+    facet_rows="Yogurt",
+    filter_params={"Digest.stage": "G120"},
+)
+```
+
+![](README_files/figure-markdown/cell-09-output-00.png)
+
+
+
+```python
+plot_length_distribution(
+    result,
+    metric="type_num",
+    filter_params={"Yogurt": "Y1"},
+    plot_mode="density",
+)
+```
+
+![](README_files/figure-markdown/cell-10-output-00.png)
+
+
+
+### 4) Peptide alignment along a protein
+
+```python
+pep_align = plot_pep_align(
+    result,
+    protein_name="P02662",
+    filter_params={"Digest.stage": "G120"},
+    x_interval=5,
+    x_range=(80, 165),
+    y_range=(0, 12),
+)
+pep_align
+```
+
+![](README_files/figure-markdown/cell-12-output-00.png)
+
+
+
+### 5) Cleavage-site intensity (N and/or C termini)
+
+```python
+plot_cleavage_site(
+    result,
+    terminal="both",
+    measure="intensity",
+    replicate_mode="mean",
+    filter_params={"Digest.stage": "G120"},
+    scientific_10_y=True,
+    drop_constant_groups=True,
+)
+```
+
+![](README_files/figure-markdown/cell-14-output-00.png)
+
+
+
+## 🛠️ Required input files
+
+Three files are required:
+
+### 1) MaxQuant peptide output (`peptides.txt`)
+
+- Must contain the structural columns used to derive cleavage information and peptide identities.
+- All intensity columns must be present and **numeric**.
+
+### 2) Intensity-column metadata (`intensity_columns_file`)
+
+- Each row maps a single intensity column to the replicate and all associated grouping variables.
+- The non-`Intensity.column` fields must **uniquely identify** the row; they define the nested grouping structure used to calculate replicate and group summaries.
+- It is recommended to use dots (`.`) instead of spaces in column names for easier programming.
+
+### 3) Protein mapping (`protein_mapping_file`)
+
+- Provides human-readable protein names and groups for each `Leading.razor.protein` identifier.
+- Missing matches are filled with the fallback levels `Others` and `Whey`.
+- A curated example mapping also ships with the package via `load_example_protein_mapping()`.
+
+```python
+from peptidomicspy import load_example_protein_mapping, processPeptides
+
+protein_mapping = load_example_protein_mapping()
+
+result = processPeptides(
+    peptides_file="path/to/your/peptides.txt",
+    intensity_columns_file="path/to/your/Intensity_columns.csv",
+    protein_mapping_file=protein_mapping,
+)
+```
+
+## 📖 Citation
+
+If you use **peptidomicspy** in your work, please cite this repository:
+
+*Ma, X., & Ren, Q. (2025). peptidomicspy (Version 1.1.1-alpha) [Computer software]*
+
+## 📜 License
+
+This project is licensed under the **GPL-3.0-or-later License** — see the `LICENSE` file for details.
