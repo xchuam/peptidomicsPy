@@ -169,11 +169,26 @@ Three files are required:
 - Must contain the structural columns used to derive cleavage information and peptide identities.
 - All intensity columns must be present and **numeric**.
 
+Example:
+
+| Sequence | Leading razor protein | Length | Start position | End position | Amino acid before | First amino acid | Last amino acid | Amino acid after | Intensity Sample1_1 | Intensity Sample1_2 | Intensity Sample2_1 |
+|---|---|---:|---:|---:|---|---|---|---:|---:|---:|
+| AAGGPGAPADPGRPT | P81265 | 15 | 609 | 623 | D | A | T | G | 40332000 | 51443000 | 39094000 |
+| AAIDEASKKLNAQ | P15497 | 13 | 253 | 265 | L | A | Q | — | 18167000 | 26893000 | 17524000 |
+
 ### 2) Intensity-column metadata (`intensity_columns_file`)
 
 - Each row maps a single intensity column to the replicate and all associated grouping variables.
 - The non-`Intensity.column` fields must **uniquely identify** the row; they define the nested grouping structure used to calculate replicate and group summaries.
 - It is recommended to use dots (`.`) instead of spaces in column names for easier programming.
+
+Example:
+
+| Intensity.column | Digest.stage | Sample | Replicate |
+|---|---|---|---:|
+| Intensity Sample1_1 | Gastric | S1 | 1 |
+| Intensity Sample1_2 | Gastric | S1 | 2 |
+| Intensity Sample2_1 | Gastric | S2 | 1 |
 
 ### 3) Protein mapping (`protein_mapping_file`)
 
