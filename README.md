@@ -172,7 +172,7 @@ Three files are required:
 Example:
 
 | Sequence | Leading razor protein | Length | Start position | End position | Amino acid before | First amino acid | Last amino acid | Amino acid after | Intensity Sample1_1 | Intensity Sample1_2 | Intensity Sample2_1 |
-|---|---|---:|---:|---:|---|---|---|---:|---:|---:|
+|----|----|----|----|----|----|----|----|----|----|----|----|
 | AAGGPGAPADPGRPT | P81265 | 15 | 609 | 623 | D | A | T | G | 40332000 | 51443000 | 39094000 |
 | AAIDEASKKLNAQ | P15497 | 13 | 253 | 265 | L | A | Q | — | 18167000 | 26893000 | 17524000 |
 
@@ -185,7 +185,7 @@ Example:
 Example:
 
 | Intensity.column | Digest.stage | Sample | Replicate |
-|---|---|---|---:|
+|----|----|----|----|
 | Intensity Sample1_1 | Gastric | S1 | 1 |
 | Intensity Sample1_2 | Gastric | S1 | 2 |
 | Intensity Sample2_1 | Gastric | S2 | 1 |
