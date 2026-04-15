@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: "peptidomicspy: Tools for Peptidomics and Protein Digestion Analysis"
+title: "peptidomicsPy: Tools for Peptidomics and Protein Digestion Analysis"
 type: software
 abstract: >
   A Python package for processing, filtering, visualizing, and comparing
@@ -36,7 +36,7 @@ contact:
     email: xuchuan.ma@gmail.com
 preferred-citation:
   type: software
-  title: "peptidomicspy"
+  title: "peptidomicsPy"
   version: "1.1.1-alpha"
   authors:
     - family-names: Ma
