@@ -7,7 +7,7 @@ abstract: >
   peptidomics data from protein digestion studies, including MaxQuant peptide
   processing, GRAVY calculations, peptide alignment, cleavage-site plots, and
   group-wise differential analysis.
-version: "1.1.1a0"
+version: "1.1.1-alpha"
 license: GPL-3.0-or-later
 repository-code: "https://github.com/xchuam/peptidomicsPy"
 url: "https://github.com/xchuam/peptidomicsPy"
@@ -37,7 +37,7 @@ contact:
 preferred-citation:
   type: software
   title: "peptidomicspy"
-  version: "1.1.1a0"
+  version: "1.1.1-alpha"
   authors:
     - family-names: Ma
       given-names: Xuchuan
@@ -47,4 +47,4 @@ preferred-citation:
       given-names: Qing
       orcid: "https://orcid.org/0000-0003-3479-6679"
       affiliation: "Wageningen University & Research"
-  year: 2025
+  year: 2026
