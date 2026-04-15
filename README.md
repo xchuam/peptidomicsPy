@@ -178,7 +178,7 @@ Example:
 
 ### 2) Intensity-column metadata (`intensity_columns_file`)
 
-- Each row maps a single intensity column to the replicate and all associated grouping variables.
+- Each row maps a single intensity column to the replicate and all associated grouping variables (e.g. digest stage, treatment).
 - The non-`Intensity.column` fields must **uniquely identify** the row; they define the nested grouping structure used to calculate replicate and group summaries.
 - It is recommended to use dots (`.`) instead of spaces in column names for easier programming.
 
@@ -194,7 +194,17 @@ Example:
 
 - Provides human-readable protein names and groups for each `Leading.razor.protein` identifier.
 - Missing matches are filled with the fallback levels `Others` and `Whey`.
-- A curated example mapping also ships with the package via `load_example_protein_mapping()`.
+- A curated default mapping ships with the package as an in-memory dataset you can load via `load_example_protein_mapping()`.
+
+Example:
+
+| Leading.razor.protein    | Protein.name | Protein.group |
+|--------------------------|--------------|---------------|
+| UNIPROT:A0A452FK23_CAPHI | Beta-casein  | Casein        |
+| UNIPROT:CASB_CAPHI       | Beta-casein  | Casein        |
+| UNIPROT:A0A452G9D9_CAPHI | Kappa-casein | Casein        |
+
+To use the in-memory default mapping file, call:
 
 ```python
 from peptidomicspy import load_example_protein_mapping, processPeptides
@@ -210,10 +220,10 @@ result = processPeptides(
 
 ## 📖 Citation
 
-If you use **peptidomicspy** in your work, please cite this repository:
+*Ma, X., & Ren, Q. (2025). peptidomicspy (Version 1.1.1-alpha) [Computer software]*
 
-*Ma, X., & Ren, Q. (2026). peptidomicspy (Version 1.1.1-alpha) [Computer software]*
+If you use this package, please cite it as above.
 
 ## 📜 License
 
-This project is licensed under the **GPL-3.0-or-later License** — see the `LICENSE` file for details.
+This project is licensed under the **GPL-3.0 License** — see the `LICENSE` file for details.
