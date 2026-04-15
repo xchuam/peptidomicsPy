@@ -197,7 +197,7 @@ result = processPeptides(
 
 If you use **peptidomicspy** in your work, please cite this repository:
 
-*Ma, X., & Ren, Q. (2025). peptidomicspy (Version 1.1.1-alpha) [Computer software]*
+*Ma, X., & Ren, Q. (2026). peptidomicspy (Version 1.1.1-alpha) [Computer software]*
 
 ## 📜 License
 
