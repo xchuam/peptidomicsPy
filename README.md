@@ -220,9 +220,9 @@ result = processPeptides(
 
 ## 📖 Citation
 
-If you use **peptidomicspy** in your work, please cite this repository:
+If you use **peptidomicsPy** in your work, please cite this repository:
 
-*Ma, X., & Ren, Q. (2026). peptidomicspy (Version 1.1.1-alpha) [Computer software]*
+*Ma, X., & Ren, Q. (2026). peptidomicsPy (Version 1.1.1-alpha) [Computer software]*
 
 ## 📜 License
 
